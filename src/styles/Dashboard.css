@@ -1,0 +1,50 @@
+.dashboard-container{
+    padding: 50px 70px 50px 70px;
+    min-height: 100vh;
+}
+
+.users-header{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row !important;
+}
+
+.pages{
+    cursor: pointer;
+}
+
+
+.card-content{
+    padding: 15px !important;
+}
+
+.input-field{
+    display: flex;
+    align-items: center;
+}
+
+.users-search{
+    padding: 5px !important;
+    border-radius: 5px !important;
+    border: none;
+    background-color: rgba(255, 255,255, 0.2) !important;
+    height: 1.5rem !important;
+    margin-left: 5px !important;
+    transition: 1s all;
+}
+
+.users-search:focus{
+    background-color: white !important;
+}
+
+.dashboard-card{
+    height: 200px;
+}
+
+.users-header h1{
+    color: white;
+    margin: 0;
+    font-size: 3rem;
+}
