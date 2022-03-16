@@ -1,3 +1,7 @@
 .brand-logo img{
     width: 250px;
 }
+.btn-logout{
+    height: 64px !important;
+    padding: 0 15px;
+}

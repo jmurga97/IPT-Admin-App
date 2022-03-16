@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, setDoc, doc, getDoc } from "firebase/firestore";
 import initialState from "../initialState";
 import { db } from "../config/fbconfig";
+import { async } from "@firebase/util";
 
 const useInitialState = () => {
   const [state, setState] = useState(initialState);
@@ -13,6 +14,12 @@ const useInitialState = () => {
     });
   };
 
+  const addUser = (user) => {
+    setState({
+      ...state,
+      users: [...state.users, user]
+    })
+  }
 
 
   const handleInitialData = async () => {
@@ -28,9 +35,24 @@ const useInitialState = () => {
       console.warn(error.message);
     }
   };
+  const handleAddUser = async (user) => {
+    try{
+      const docSnap = await getDoc(doc(db,'users',user.userId))
+      if(docSnap.exists()){
+        return 'El usuario a registrar ya existe'
+      }else{
+        await setDoc(doc(db,'users',user.userId),user)
+        addUser(user)
+      }
+
+    }catch(err){
+      console.warn(err.message)
+    }
+  }
 
   return {
     handleInitialData,
+    handleAddUser,
     state,
   };
 };

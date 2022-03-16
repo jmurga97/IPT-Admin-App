@@ -7,9 +7,23 @@
   font-family: "Barlow", sans-serif;
 }
 
+.loader{
+  height: 100vh;
+  margin: 0 !important;
+}
+
+.center{
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+.btn-logo{
+  font-size: 1.3rem;
+}
+
 
 .btn {
-  background-color: #f07d43;
+  background-color: #f07d43 !important;
   margin-top: 1rem;
 }
 

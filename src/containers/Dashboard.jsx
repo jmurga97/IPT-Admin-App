@@ -6,6 +6,7 @@ import UsersTable from "../components/UsersTable";
 import "../styles/Dashboard.css";
 
 const Dashboard = () => {
+
   return (
     <div className="dashboard-container ipt-background">
       <div className="row">

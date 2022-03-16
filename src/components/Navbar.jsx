@@ -34,10 +34,10 @@ const Navbar = () => {
               Registro
             </NavLink>
           </li>
-          <li>
+          <li className="btn-logout center">
             {" "}
-            <button onClick={() => onLogOut()} className="btn-floating waves-effect waves-light blue">
-              <MdLogout />
+            <button onClick={() => onLogOut()} className="btn-floating waves-effect waves-light blue center">
+              <MdLogout className="btn-logo" />
             </button>
           </li>
         </ul>

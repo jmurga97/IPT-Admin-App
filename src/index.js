@@ -1,9 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./styles/index.css";
+import 'materialize-css/dist/css/materialize.min.css'
 import App from "./routes/App";
+import M from 'materialize-css'
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
+
+M.AutoInit()
 
 ReactDOM.render(
   <BrowserRouter>

@@ -4,11 +4,13 @@ import loginLogo from "../images/ipt_login_logo.png";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../config/fbconfig";
 import AppContext from "../context/AppContext";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
   const {setAuthUser} = useContext(AppContext)
+  const navigate = useNavigate()
 
   const onLogin = async (e) => {
     e.preventDefault()
@@ -18,6 +20,7 @@ const Login = () => {
       const currentUser = await signInWithEmailAndPassword(auth,email,password)
       console.log(setAuthUser)
       setAuthUser(currentUser)
+      navigate('/')
     }catch(err){
       console.warn(err.message)
     }

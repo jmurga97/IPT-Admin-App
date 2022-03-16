@@ -1,15 +1,63 @@
-import React, { useRef } from "react";
-import '../styles/Register.css'
+import React, { useContext, useRef, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import AppContext from "../context/AppContext";
+import M from 'materialize-css'
+import "../styles/Register.css";
 
 const Register = () => {
-  const formRef = useRef(null)
+  const [error, setError] = useState();
+  const formRef = useRef(null);
+  const navigate = useNavigate();
+  const { initialState, authUser } = useContext(AppContext);
 
-  const onRegisterUser = () => {
+  // useEffect(() => {
+  //   const unsubscribe = navigation.addListener('focus', () => {
+  //     // Screen was focused
+  //     // Do something
+  //     if(!authUser){
+  //         navigation.navigate('/signin')
+  //     }
+  //   });
+  //   return unsubscribe;
+  // }, [navigation,authUser]);
 
-  }
+  const onRegisterUser = (e) => {
+    e.preventDefault();
+    const formData = new FormData(formRef.current);
+    const user = {
+      userId: formData.get("cedula"),
+      name: formData.get("firstName"),
+      lastName: formData.get("lastName"),
+      email: formData.get("email"),
+      sector: formData.get("sector"),
+      phone: formData.get("phone"),
+      ssidConnection: formData.get("ssidConnection"),
+    };
+
+    initialState.handleAddUser(user).then((msg) => {
+      if (!msg) {
+        setError(null);
+        M.toast({html: 'Usuario creado con éxito'})
+        navigate("/");
+      } else {
+        setError(msg);
+      }
+    });
+  };
+  console.log(error);
   return (
     <div className="ipt-background">
       <div className="container register-container">
+        {error && (
+            <div className="row">
+            <div className="col s12">
+              <div className="card-panel white">
+                <span className="red-text">{error}
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
         <form onSubmit={(e) => onRegisterUser(e)} ref={formRef}>
           <div className="card-panel white black-text">
             <div className="row">
@@ -49,11 +97,14 @@ const Register = () => {
           </div>
           <div className="card-panel white black-text">
             <div className="input-field col s12">
-              <input id="phone" type="tel" name="phone" required />
-              <label htmlFor="phone">WiFi al que se conecta normalmente</label>
+              <input id="ssid" type="tel" name="ssidConnection" required />
+              <label htmlFor="ssid">WiFi al que se conecta normalmente</label>
             </div>
           </div>
-          <button type="submit" className="btn waves-effect waves-light"> Registrar Usuario </button>
+          <button type="submit" className="btn waves-effect waves-light">
+            {" "}
+            Registrar Usuario{" "}
+          </button>
         </form>
       </div>
     </div>
