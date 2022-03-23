@@ -5,27 +5,56 @@ import AppContext from "../context/AppContext";
 import SearchUser from "./SearchUser";
 import MdNavigateBefore from "react-icons/md";
 import MdNavigateNext from "react-icons/md";
+import Loader from "./Loader";
 
-const UsersTable = () => {
-  const { initialState } = useContext(AppContext);
-  const users = initialState.state.users;
+const UsersTable = ({users}) => {
+  // const { initialState } = useContext(AppContext);
+  // const users = initialState.state.users;
   const [search, setSearch] = useState(users);
   const [pageNumber, setPageNumber] = useState(0);
-
+  const [loader,setLoader] = useState(true)
   const usersPerPage = 5;
-  const itemsVisited = pageNumber + usersPerPage;
-  const displayUsers = search.slice(itemsVisited, itemsVisited + usersPerPage);
+  let itemsVisited = 0
 
-  const pageCount = Math.ceil(search.length / usersPerPage);
+  useEffect(() => {
+    if(users.length !== 0 ){
+      console.log('IN USEEFFECT')
+      setSearch(users)
+      setLoader(false)
+    }
+  },[users])
+
+
+  if(loader){
+    return (
+      <div className="col s12 table-container">
+        <div className="card-panel z-depth-3">
+          <Loader container='center' color='orange-loader' size='small'/>
+        </div>
+      </div>
+    )
+  }
+
+
+  if(pageNumber === 0){
+    itemsVisited = 0
+  }else{
+    //El -1 se coloca para que el array displayUsers tome en cuenta el primer elemento
+    itemsVisited = pageNumber * usersPerPage
+  }
+
+  const displayUsers = search.slice(itemsVisited, itemsVisited + usersPerPage )
+  const pageCount = Math.ceil(search.length/usersPerPage)
   const pageChange = ({ selected }) => {
     setPageNumber(selected);
   };
+
 
   return (
     <div className="col s12 table-container">
       <SearchUser users={users} setSearch={setSearch} />
       <div className="card-panel z-depth-3">
-        <table className="responsive-table centered striped">
+        <table className="responsive-table centered striped centered">
           <thead>
             <tr>
               <th>Cedula</th>
@@ -34,7 +63,8 @@ const UsersTable = () => {
               <th>Correo</th>
               <th>Teléfono</th>
               <th>Red WiFi</th>
-              <th>Agregar Ticket</th>
+              <th>Añadir Ticket</th>
+              <th>Info Tickets</th>
             </tr>
           </thead>
           <tbody>

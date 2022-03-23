@@ -1,28 +1,21 @@
-import React, { useContext, useRef, useState, useEffect } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AppContext from "../context/AppContext";
 import M from 'materialize-css'
 import "../styles/Register.css";
+import Loader from "../components/Loader";
 
 const Register = () => {
   const [error, setError] = useState();
+  const [loader, setLoader] = useState(false)
+  const errorMsg = useRef(null)
   const formRef = useRef(null);
   const navigate = useNavigate();
-  const { initialState, authUser } = useContext(AppContext);
-
-  // useEffect(() => {
-  //   const unsubscribe = navigation.addListener('focus', () => {
-  //     // Screen was focused
-  //     // Do something
-  //     if(!authUser){
-  //         navigation.navigate('/signin')
-  //     }
-  //   });
-  //   return unsubscribe;
-  // }, [navigation,authUser]);
+  const { initialState } = useContext(AppContext);
 
   const onRegisterUser = (e) => {
     e.preventDefault();
+    setLoader(true)
     const formData = new FormData(formRef.current);
     const user = {
       userId: formData.get("cedula"),
@@ -34,23 +27,26 @@ const Register = () => {
       ssidConnection: formData.get("ssidConnection"),
     };
 
+    //handleAddUser retorna una promesa ya que es una async func que devuelve un mensaje en caso que el usuario ya exista
     initialState.handleAddUser(user).then((msg) => {
       if (!msg) {
         setError(null);
+        setLoader(true)
         M.toast({html: 'Usuario creado con éxito'})
         navigate("/");
       } else {
         setError(msg);
+        errorMsg.current.scrollIntoView()
       }
     });
   };
-  console.log(error);
+  //console.log(error);
   return (
     <div className="ipt-background">
       <div className="container register-container">
         {error && (
-            <div className="row">
-            <div className="col s12">
+            <div className="row" ref={errorMsg} >
+            <div className="col  error-register s12">
               <div className="card-panel white">
                 <span className="red-text">{error}
                 </span>
@@ -101,10 +97,14 @@ const Register = () => {
               <label htmlFor="ssid">WiFi al que se conecta normalmente</label>
             </div>
           </div>
+          <div className="form-btn">
           <button type="submit" className="btn waves-effect waves-light">
             {" "}
             Registrar Usuario{" "}
           </button>
+          {loader && <Loader container='' size='small' color='white-loader'/>}
+          </div>
+
         </form>
       </div>
     </div>

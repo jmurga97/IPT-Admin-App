@@ -3,6 +3,7 @@ import Login from "../containers/Login";
 import Dashboard from "../containers/Dashboard";
 import Register from "../containers/Register";
 import AddTicket from "../containers/AddTicket";
+import InfoTicket from "../containers/InfoTicket";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import useInitialState from "../hooks/useInitialState";
@@ -12,8 +13,13 @@ import { auth } from "../config/fbconfig";
 import ProtectedRoute from "../containers/ProtectedRoutes";
 import Loader from "../components/Loader";
 
+/** TODO:
+ *
+ *
+ * */
 const App = () => {
   const initialState = useInitialState();
+  const {handleInitialData} = initialState
   const [authUser, setAuthUser] = useState("unknown");
 
   useEffect(() => {
@@ -25,16 +31,21 @@ const App = () => {
     };
   }, []);
 
-  //   useEffect(() => {
-  //     initialState.handleInitialData();
-  //   }, []);
+    useEffect(() => {
+      handleInitialData();
+    }, []);
+
+
 
   if (authUser === "unknown") {
-    return <Loader />;
+    //Size solo puede ser big o small y color solo puede ser spinner-blue-only, white o orange
+    return <Loader container='init-loader center' color='spinner-blue-only' size='big'/>;
   }
 
   return (
-    <AppContext.Provider value={{ initialState, setAuthUser, authUser }}>
+    <AppContext.Provider
+      value={{ initialState, setAuthUser, authUser }}
+    >
       {!authUser ? null : <Navbar />}
       <Routes>
         <Route
@@ -70,9 +81,14 @@ const App = () => {
           }
         />
         <Route
-          path="*"
-          element={<Navigate to='/' replace/>}
+          path="/infoticket/:id"
+          element={
+            <ProtectedRoute user={authUser}>
+              <InfoTicket />
+            </ProtectedRoute>
+          }
         />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </AppContext.Provider>
   );

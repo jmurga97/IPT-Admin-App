@@ -2,3 +2,12 @@
     padding-top: 50px;
     padding-bottom: 50px;
 }
+
+.error-register{
+    padding: 0 !important;
+}
+
+.form-btn{
+    display: flex;
+    justify-content: space-between;
+}

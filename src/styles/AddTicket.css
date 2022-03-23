@@ -1,0 +1,17 @@
+.card-content{
+    margin: 0 !important;
+}
+
+.btn{
+    margin-top: 0 !important;
+}
+
+.card-action{
+    display: flex;
+    justify-content: space-around;
+}
+
+.card-title{
+    display: flex !important;
+    justify-content: space-between;
+}

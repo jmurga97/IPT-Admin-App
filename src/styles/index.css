@@ -7,7 +7,30 @@
   font-family: "Barlow", sans-serif;
 }
 
-.loader{
+html,body{
+  margin:0;
+}
+
+
+
+.page-container{
+  padding: 50px 70px 50px 70px;
+  min-height: 105vh;
+}
+
+.table-container{
+  min-height: 600px !important;
+}
+
+.white-loader{
+  border-color: #fff !important;
+}
+
+.orange-loader{
+  border-color: #f07d43 !important;
+}
+
+.init-loader{
   height: 100vh;
   margin: 0 !important;
 }
