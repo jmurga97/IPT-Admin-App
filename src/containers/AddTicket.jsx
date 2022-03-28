@@ -38,7 +38,11 @@ const AddTicket = () => {
       };
 
       initialState.handleAddTicket(payload, id)
-        .then(()=>setLoader(false));
+        .then(()=>{
+          setLoader(false)
+          ticketForm.current.reset()
+          toasts('Ticket Agregado')
+        });
 
     } else {
       setError("La información proporcionada no coincide");

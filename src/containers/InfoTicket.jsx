@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import Tickets from "../components/Tickets";
 import AppContext from "../context/AppContext";
@@ -33,8 +33,6 @@ const InfoTicket = () => {
   const pageChange = ({ selected }) => {
     setPageNumber(selected);
   };
-
-  console.log("initialState USER", userDetail);
 
   if (!tickets) {
     return (
@@ -87,7 +85,7 @@ const InfoTicket = () => {
             <div className="col s3 center">
               <button
                 onClick={onAddTicket}
-                className="btn-floating hoverable waves-effect waves-light blue center"
+                className="btn-floating btn-large hoverable waves-effect waves-light blue center pulse"
               >
                 {" "}
                 <AiFillFileAdd color="white" className="btn-logo" />

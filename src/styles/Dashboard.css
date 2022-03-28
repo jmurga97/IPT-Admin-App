@@ -19,7 +19,10 @@
     padding-right: 20px;
 }
 
-
+.micronodes{
+    overflow-y: auto;
+    overflow-x: hidden;
+}
 .card-content{
     padding: 15px !important;
 }

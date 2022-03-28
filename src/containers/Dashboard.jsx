@@ -9,14 +9,14 @@ import AppContext from "../context/AppContext";
 const Dashboard = () => {
 
   const {initialState} = useContext(AppContext)
-  const {users} = initialState.state
+  const {users,micronodes} = initialState.state
 
   return (
     <div className="page-container ipt-background">
       <div className="row">
         <KioskoCard />
-        <TicketsCard />
-        <MicronodesCard />
+        <TicketsCard/>
+        <MicronodesCard   micronodes={micronodes}/>
       </div>
       <div className="row">
         <UsersTable users={users} />

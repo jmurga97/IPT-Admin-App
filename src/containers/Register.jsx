@@ -1,21 +1,34 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AppContext from "../context/AppContext";
-import M from 'materialize-css'
+import M from "materialize-css";
 import "../styles/Register.css";
 import Loader from "../components/Loader";
+import toasts from "../utils/toasts";
 
 const Register = () => {
   const [error, setError] = useState();
-  const [loader, setLoader] = useState(false)
-  const errorMsg = useRef(null)
+  const [loader, setLoader] = useState(false);
+  const errorMsg = useRef(null);
   const formRef = useRef(null);
   const navigate = useNavigate();
   const { initialState } = useContext(AppContext);
+  const { micronodes } = initialState.state;
+  let ssids = [];
+
+  useEffect(() => {
+    M.AutoInit();
+  }, []);
+
+  if (micronodes.length > 0) {
+    micronodes.forEach(({ ssid }) => {
+      ssids = [...ssids, ssid];
+    });
+  }
 
   const onRegisterUser = (e) => {
     e.preventDefault();
-    setLoader(true)
+    setLoader(true);
     const formData = new FormData(formRef.current);
     const user = {
       userId: formData.get("cedula"),
@@ -26,30 +39,27 @@ const Register = () => {
       phone: formData.get("phone"),
       ssidConnection: formData.get("ssidConnection"),
     };
-
-    //handleAddUser retorna una promesa ya que es una async func que devuelve un mensaje en caso que el usuario ya exista
+    // handleAddUser retorna una promesa ya que es una async func que devuelve un mensaje en caso que el usuario ya exista
     initialState.handleAddUser(user).then((msg) => {
       if (!msg) {
         setError(null);
-        setLoader(true)
-        M.toast({html: 'Usuario creado con éxito'})
+        setLoader(true);
+        toasts("Usuario creado con éxito");
         navigate("/");
       } else {
         setError(msg);
-        errorMsg.current.scrollIntoView()
+        errorMsg.current.scrollIntoView();
       }
     });
   };
-  //console.log(error);
   return (
     <div className="ipt-background">
       <div className="container register-container">
         {error && (
-            <div className="row" ref={errorMsg} >
+          <div className="row" ref={errorMsg}>
             <div className="col  error-register s12">
               <div className="card-panel white">
-                <span className="red-text">{error}
-                </span>
+                <span className="red-text">{error}</span>
               </div>
             </div>
           </div>
@@ -91,20 +101,33 @@ const Register = () => {
               <label htmlFor="phone">Teléfono</label>
             </div>
           </div>
-          <div className="card-panel white black-text">
-            <div className="input-field col s12">
-              <input id="ssid" type="tel" name="ssidConnection" required />
-              <label htmlFor="ssid">WiFi al que se conecta normalmente</label>
+          {ssids.length > 0 && (
+            <div className="card-panel white black-text">
+              <div className="input-field col s12">
+                <select name="ssidConnection">
+                  <option defaultValue="" disabled>
+                    Elija una opción
+                  </option>
+                  {ssids.map((ssid) => (
+                    <option key={ssid} value={ssid}>
+                      {ssid}
+                    </option>
+                  ))}
+                </select>
+                <label>Wifi al que se conecta normalmente</label>
+              </div>
             </div>
-          </div>
-          <div className="form-btn">
-          <button type="submit" className="btn waves-effect waves-light">
-            {" "}
-            Registrar Usuario{" "}
-          </button>
-          {loader && <Loader container='' size='small' color='white-loader'/>}
-          </div>
+          )}
 
+          <div className="form-btn">
+            <button type="submit" className="btn waves-effect waves-light">
+              {" "}
+              Registrar Usuario{" "}
+            </button>
+            {loader && (
+              <Loader container="" size="small" color="white-loader" />
+            )}
+          </div>
         </form>
       </div>
     </div>

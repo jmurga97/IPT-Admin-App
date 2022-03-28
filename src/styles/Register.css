@@ -11,3 +11,7 @@
     display: flex;
     justify-content: space-between;
 }
+
+.dropdown-content li>a, .dropdown-content li>span{
+    color: #f07d43 !important;
+}
