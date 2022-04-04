@@ -14,7 +14,7 @@ import ProtectedRoute from "../containers/ProtectedRoutes";
 import Loader from "../components/Loader";
 
 /** TODO:
- *
+ *  Add users to micronodes when the app register a new user
  *
  * */
 const App = () => {
@@ -36,8 +36,6 @@ const App = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-
-    console.log('STATE: ', initialState.state)
   if (authUser === "unknown") {
     //Size solo puede ser big o small y color solo puede ser spinner-blue-only, white o orange
     return <Loader container='init-loader center' color='spinner-blue-only' size='big'/>;

@@ -18,7 +18,6 @@ const UsersTable = ({users}) => {
 
   useEffect(() => {
     if(users.length !== 0 ){
-      console.log('IN USEEFFECT')
       setSearch(users)
       setLoader(false)
     }

@@ -4,7 +4,6 @@ const formatDataFromFirestore = (querySnapshot) => {
     querySnapshot.forEach((doc) => {
         dataArray.push({ ...doc.data() });
     });
-    console.log('data Array', dataArray)
     return dataArray
 }
 
