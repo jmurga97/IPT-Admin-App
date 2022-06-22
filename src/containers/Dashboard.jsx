@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import KioskoCard from "../components/KioskoCard";
 import TicketsCard from "../components/TicketsCard";
 import MicronodesCard from "../components/MicronodesCard";
@@ -6,15 +6,22 @@ import UsersTable from "../components/UsersTable";
 import "../styles/Dashboard.css";
 import AppContext from "../context/AppContext";
 
+
 const Dashboard = () => {
 
   const {initialState} = useContext(AppContext)
-  const {users,micronodes} = initialState.state
+  const { handleInitialData } = initialState;
+  const {users,micronodes,authedKiosko} = initialState.state
+
+  useEffect(() => {
+    handleInitialData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="page-container ipt-background">
       <div className="row">
-        <KioskoCard />
+        <KioskoCard authedKiosko={authedKiosko}/>
         <TicketsCard/>
         <MicronodesCard   micronodes={micronodes}/>
       </div>

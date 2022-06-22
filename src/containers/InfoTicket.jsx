@@ -100,8 +100,11 @@ const InfoTicket = () => {
             <thead>
               <tr>
                 <th>Ticket ID</th>
-                <th>Fecha</th>
-                <th>Hora</th>
+                <th>Usuario</th>
+                <th>Monto Bs.</th>
+                <th>Tipo de Pago</th>
+                <th>Kiosko</th>
+                <th>Fecha de Pago</th>
               </tr>
             </thead>
             <tbody>

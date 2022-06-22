@@ -5,6 +5,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../config/fbconfig";
 import AppContext from "../context/AppContext";
 import { useNavigate } from "react-router-dom";
+import toasts from "../utils/toasts";
 
 const Login = () => {
   const emailRef = useRef(null);
@@ -18,11 +19,10 @@ const Login = () => {
     const password = passwordRef.current.value
     try{
       const currentUser = await signInWithEmailAndPassword(auth,email,password)
-      console.log(setAuthUser)
       setAuthUser(currentUser)
       navigate('/')
     }catch(err){
-      console.warn(err.message)
+      toasts('Contraseña Incorrecta')
     }
   };
 

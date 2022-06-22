@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { auth } from "../config/fbconfig";
 import {
   collection,
   getDocs,
@@ -7,7 +8,9 @@ import {
   getDoc,
   updateDoc,
   arrayUnion,
-  getDocsFromCache
+  getDocsFromCache,
+  where,
+  query,
 } from "firebase/firestore";
 import initialState from "../initialState";
 import { db } from "../config/fbconfig";
@@ -16,35 +19,42 @@ import formatDataFromFirestore from "../utils/formatDataFromFirestore";
 
 const useInitialState = () => {
   const [state, setState] = useState(initialState);
+  const currentUser = auth.currentUser;
   const userRef = (id) => doc(db, "users", id);
-  const usersCollectionRef = collection(db,'users')
-  const micronodesCollectionRef = collection(db,'micronodes')
+  const ticketRef = (ticketId) => doc(db, "tickets", ticketId);
+  const usersCollectionRef = collection(db, "users");
+  const micronodesCollectionRef = collection(db, "micronodes");
+  const kioskoCollectionRef = collection(db, "kiosko");
 
-  // const addInitialUsers = (users) => {
-  //   setState({
-  //     ...state,
-  //     users,
-  //   });
-  // };
-  // const addInitialMicronodes = (micronodes) => {
-  //   setState({
-  //     ...state,
-  //     micronodes
-  //   })
-  // }
-  const addInitialData = ({users, micronodes}) => {
+  const addInitialData = ({ users, micronodes, kiosko, authedKiosko }) => {
     setState({
       ...state,
       users,
-      micronodes
-    })
-  }
+      micronodes,
+      kiosko,
+      authedKiosko,
+    });
+  };
 
   const addUser = (user) => {
     setState({
       ...state,
       users: [...state.users, user],
     });
+  };
+
+  const addAllTickets = (tickets) => {
+    if (tickets.length === 0) {
+      setState({
+        ...state,
+        tickets: [],
+      });
+    } else {
+      setState({
+        ...state,
+        tickets,
+      });
+    }
   };
 
   const addTicket = (payload, id) => {
@@ -70,77 +80,62 @@ const useInitialState = () => {
       users: newUsers,
     });
   };
+
   const handleInitialData = async () => {
     try {
+      const queryUsersSnapshot = await getDocsFromCache(usersCollectionRef);
+      const queryMicronodesSnapshot = await getDocsFromCache(
+        micronodesCollectionRef
+      );
+      const queryKioskoSnapshot = await getDocsFromCache(kioskoCollectionRef);
 
-        const queryUsersSnapshot = await getDocsFromCache(usersCollectionRef)
-        const queryMicronodesSnapshot = await getDocsFromCache(micronodesCollectionRef)
+      if (
+        !queryUsersSnapshot.empty &&
+        !queryMicronodesSnapshot.empty &&
+        !queryKioskoSnapshot.empty
+      ) {
+        // Si hay data en el cache, getDocsFromCache recuperara la data y el atributo .empty sera falso
 
-        if(!queryUsersSnapshot.empty && !queryMicronodesSnapshot.empty){
-          // Si hay data en el cache, getDocsFromCache recuperara la data y el atributo .empty sera falso
-          addInitialData({
-            users: formatDataFromFirestore(queryUsersSnapshot),
-            micronodes: formatDataFromFirestore(queryMicronodesSnapshot)
-          })
-        }else{
-          // Si no hay data en cache, recupero desde Firestore
-          const queryUsersSnapshot = await getDocs(usersCollectionRef);
-          const queryMicronodesSnapshot = await getDocs(micronodesCollectionRef)
-          addInitialData({
-            users: formatDataFromFirestore(queryUsersSnapshot),
-            micronodes: formatDataFromFirestore(queryMicronodesSnapshot)
-          })
+        const kiosko = formatDataFromFirestore(queryKioskoSnapshot);
+        const authedKiosko = kiosko.filter(
+          (data) => data.email === currentUser.email
+        );
+        addInitialData({
+          users: formatDataFromFirestore(queryUsersSnapshot),
+          micronodes: formatDataFromFirestore(queryMicronodesSnapshot),
+          kiosko,
+          authedKiosko,
+        });
+      } else {
+        // Si no hay data en cache, recupero desde Firestore
+        const queryUsersSnapshot = await getDocs(usersCollectionRef);
+        const queryMicronodesSnapshot = await getDocs(micronodesCollectionRef);
+        const queryKioskoSnapshot = await getDocs(kioskoCollectionRef);
 
-        }
-      }catch(error){console.warn(error.message)}
+        const kiosko = formatDataFromFirestore(queryKioskoSnapshot);
+        const authedKiosko = kiosko.filter(
+          (data) => data.email === currentUser.email
+        );
+        addInitialData({
+          users: formatDataFromFirestore(queryUsersSnapshot),
+          micronodes: formatDataFromFirestore(queryMicronodesSnapshot),
+          kiosko,
+          authedKiosko,
+        });
+      }
+    } catch (error) {
+      console.warn(error.message);
+    }
   };
 
-  // const handleInitialData = async () => {
-  //   try {
-  //       // Si hay data en el cache, getDocsFromCache recuperara la data y sino, caera en el bloque catch
-  //       const queryUsersSnapshot = await getDocsFromCache(usersCollectionRef)
-  //       const queryMicronodesSnapshot = await getDocsFromCache(micronodesCollectionRef)
-
-  //       console.log('FC micronodesnapshot', queryMicronodesSnapshot)
-  //       console.log('FC userssnapshot', queryUsersSnapshot)
-  //        // TODO: Add queries of anothers collections
-  //       const users = formatDataFromFirestore(queryUsersSnapshot)
-  //       const micronodes = formatDataFromFirestore(queryMicronodesSnapshot)
-  //       if(users.length > 0 && micronodes.length > 0){
-  //         addInitialUsers(users)
-  //         addInitialMicronodes(micronodes)
-  //       } else {
-  //         throw null;
-  //       }
-
-  //     }
-  //   catch (error) {
-  //     console.warn(error.message);
-  //     // Este bloque se ejecutara si no hay documentos en el cache
-  //     try{
-  //       const queryUsersSnapshot = await getDocs(usersCollectionRef);
-  //       const queryMicronodesSnapshot = await getDocs(micronodesCollectionRef)
-  //       // TODO: Add queries of anothers collections
-  //       const users = formatDataFromFirestore(queryUsersSnapshot);
-  //       const micronodes = formatDataFromFirestore(queryMicronodesSnapshot)
-
-  //       console.log('FF users', users)
-  //       console.log('FF micronodes',micronodes)
-  //       addInitialUsers(users);
-  //       addInitialMicronodes(micronodes)
-
-  //     }catch(error){console.warn(error.message)}
-  //   }
-  // };
-
   const handleAddUser = async (user) => {
-
     try {
-      const docSnap = await getDoc(userRef(user.userId));
+      const userDocRef = userRef(user.userId);
+      const docSnap = await getDoc(userDocRef);
       if (docSnap.exists()) {
         return "El usuario a registrar ya existe";
       } else {
-        await setDoc(doc(db, "users", user.userId), user);
+        await setDoc(userDocRef, user);
         addUser(user);
       }
     } catch (err) {
@@ -150,22 +145,37 @@ const useInitialState = () => {
 
   const handleAddTicket = async (payload, id) => {
     try {
+      //ADD TICKET TO GENERAL LIST
+      const ticket = {
+        ...payload,
+        userId: id,
+      };
+      const docTicketSnap = await getDoc(ticketRef(payload.ticketId));
+      if (docTicketSnap.exists()) {
+        return "Este ticket ya existe";
+      } else {
+        await setDoc(ticketRef(payload.ticketId), ticket);
+      }
+      //ADD TICKET TO USER
       const docSnap = await getDoc(userRef(id));
       if (!docSnap.data().tickets) {
         await updateDoc(userRef(id), {
-          tickets: [payload],
+          tickets: [ticket],
         });
-        addTicket(payload, id);
+        addTicket(ticket, id);
       } else {
-        const {tickets} = docSnap.data()
-        if(!tickets.filter(ticket => ticket.ticketId === payload.ticketId).length > 0){
+        const { tickets } = docSnap.data();
+        if (
+          !tickets.filter((ticket) => ticket.ticketId === payload.ticketId)
+            .length > 0
+        ) {
           await updateDoc(userRef(id), {
-            tickets: arrayUnion(payload),
+            tickets: arrayUnion(ticket),
           });
-          addTicket(payload, id);
-          toasts('Ticket agregado')
+          addTicket(ticket, id);
+          toasts("Ticket agregado");
         } else {
-          toasts('Este ticket ya existe')
+          toasts("Este ticket ya existe");
         }
       }
     } catch (err) {
@@ -173,8 +183,22 @@ const useInitialState = () => {
     }
   };
 
+  const handleSearchTickets = async (month, year, nextMonth) => {
+    const from = new Date(`${year}-${month}`);
+    const until = new Date(`${year}-${nextMonth}`);
+    const q = query(
+      collection(db, "tickets"),
+      where("timestamp", ">", from),
+      where("timestamp", "<=", until)
+    );
+    const queryTicketsSnapshot = await getDocs(q);
+    const tickets = formatDataFromFirestore(queryTicketsSnapshot);
+    addAllTickets(tickets);
+  };
+
   return {
     handleInitialData,
+    handleSearchTickets,
     handleAddUser,
     handleAddTicket,
     state,

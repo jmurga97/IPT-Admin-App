@@ -2,7 +2,8 @@
 export default {
     users: [],
     kiosko: [],
-    kioskoTickets: [],
     micronodesAdmins: [],
     micronodes: [],
+    authedKiosko: [],
+    tickets:[]
 }

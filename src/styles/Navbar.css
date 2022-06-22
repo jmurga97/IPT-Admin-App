@@ -1,7 +1,21 @@
+.sidenav{
+    padding: 20px !important;
+
+}
+
+.sidenav-overlay{
+    opacity: 0 !important;
+    z-index: 0 !important;
+}
+
 .brand-logo img{
     width: 250px;
 }
 .btn-logout{
     height: 64px !important;
     padding: 0 15px;
+}
+.btn-menu{
+    margin-top: 15px;
+    color: #177ecc;
 }

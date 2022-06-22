@@ -1,15 +1,10 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Users from "./Users";
 import ReactPaginate from "react-paginate";
-import AppContext from "../context/AppContext";
 import SearchUser from "./SearchUser";
-import MdNavigateBefore from "react-icons/md";
-import MdNavigateNext from "react-icons/md";
 import Loader from "./Loader";
 
 const UsersTable = ({users}) => {
-  // const { initialState } = useContext(AppContext);
-  // const users = initialState.state.users;
   const [search, setSearch] = useState(users);
   const [pageNumber, setPageNumber] = useState(0);
   const [loader,setLoader] = useState(true)
