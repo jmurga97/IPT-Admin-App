@@ -1,3 +1,10 @@
+//Esta version de useInitialState verifica si hay data en el cache para recuperar los datos desde alli y no hacer consultas a la red, con el objetivo
+// de minimizar las operaciones de lectura hacia Firestore. Sin embargo, no verifica si hay diferencia entre la data del cache y la data de la base de datos por lo que siempre
+// mostrara lo que haya en el local storage
+
+//TODO: Para una proxima implementacion, comparar la data del cache con la del firestore. Si son diferentes, traer data incompleta de firestore, si no
+// mostrar la data del cache
+
 import { useState } from "react";
 import { auth } from "../config/fbconfig";
 import {
@@ -8,6 +15,7 @@ import {
   getDoc,
   updateDoc,
   arrayUnion,
+  getDocsFromCache,
   where,
   query,
   orderBy,
@@ -101,6 +109,31 @@ const useInitialState = () => {
     }
 
     try {
+      const queryUsersSnapshot = await getDocsFromCache(usersCollectionRef);
+      const queryMicronodesSnapshot = await getDocsFromCache(
+        micronodesCollectionRef
+      );
+      const queryKioskoSnapshot = await getDocsFromCache(kioskoCollectionRef);
+
+      if (
+        !queryUsersSnapshot.empty &&
+        !queryMicronodesSnapshot.empty &&
+        !queryKioskoSnapshot.empty
+      ) {
+        // Si hay data en el cache, getDocsFromCache recuperara la data y el atributo .empty sera falso
+
+        const kiosko = formatDataFromFirestore(queryKioskoSnapshot);
+        const authedKiosko = kiosko.filter(
+          (data) => data.email === currentUser.email
+        );
+        addInitialData({
+          users: formatDataFromFirestore(queryUsersSnapshot),
+          micronodes: formatDataFromFirestore(queryMicronodesSnapshot),
+          kiosko,
+          authedKiosko,
+          ticketCounter: counter
+        });
+      } else {
         // Si no hay data en cache, recupero desde Firestore
         const queryUsersSnapshot = await getDocs(usersCollectionRef);
         const queryMicronodesSnapshot = await getDocs(micronodesCollectionRef);
@@ -117,7 +150,7 @@ const useInitialState = () => {
           authedKiosko,
           ticketCounter: counter
         });
-
+      }
     } catch (error) {
       console.warn(error.message);
     }
