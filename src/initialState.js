@@ -5,5 +5,6 @@ export default {
     micronodesAdmins: [],
     micronodes: [],
     authedKiosko: [],
-    tickets:[]
+    tickets:[],
+    ticketCounter: 0
 }

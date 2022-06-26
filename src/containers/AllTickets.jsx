@@ -7,6 +7,7 @@ import Tickets from "../components/Tickets";
 import "../styles/AllTickets.css";
 import M from "materialize-css";
 import ReactHTMLTableToExcel from "react-html-table-to-excel";
+import pagination from "../utils/pagination";
 
 const AllTickets = () => {
   const [loader, setLoader] = useState(false);
@@ -30,8 +31,8 @@ const AllTickets = () => {
     "Noviembre",
     "Diciembre",
   ];
-  let itemsVisited = 0;
   const date = new Date().toLocaleDateString();
+
   useEffect(() => {
     M.AutoInit();
   }, []);
@@ -47,17 +48,7 @@ const AllTickets = () => {
         .then(()=>setLoader(false))
   };
 
-  if (pageNumber === 0) {
-    itemsVisited = 0;
-  } else {
-    //El -1 se coloca para que el array displayUsers tome en cuenta el primer elemento
-    itemsVisited = pageNumber * ticketsPerPage;
-  }
-  const displayTickets = tickets.slice(
-    itemsVisited,
-    itemsVisited + ticketsPerPage
-  );
-  const pageCount = Math.ceil(tickets.length / ticketsPerPage);
+  const {displayItems,pageCount} = pagination(ticketsPerPage,pageNumber,tickets)
   const pageChange = ({ selected }) => {
     setPageNumber(selected);
   };
@@ -122,7 +113,7 @@ const AllTickets = () => {
                   ? tickets.map((ticket) => (
                       <Tickets key={ticket.ticketId} ticket={ticket} />
                     ))
-                  : displayTickets.map((ticket) => (
+                  : displayItems.map((ticket) => (
                       <Tickets key={ticket.ticketId} ticket={ticket} />
                     ))}
               </tbody>

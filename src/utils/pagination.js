@@ -1,5 +1,10 @@
 const pagination = (itemsPerPage,pageNumber,items) => {
-    const itemsVisited = pageNumber + itemsPerPage
+    let itemsVisited = 0
+    if(pageNumber === 0){
+        itemsVisited = 0
+      }else{
+        itemsVisited = pageNumber * itemsPerPage
+      }
     const displayItems = items.slice(itemsVisited, itemsVisited + itemsPerPage)
     const pageCount = Math.ceil(items.length/itemsPerPage)
 

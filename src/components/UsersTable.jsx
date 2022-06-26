@@ -3,13 +3,14 @@ import Users from "./Users";
 import ReactPaginate from "react-paginate";
 import SearchUser from "./SearchUser";
 import Loader from "./Loader";
+import pagination from "../utils/pagination";
+import ReactHTMLTableToExcel from "react-html-table-to-excel";
 
 const UsersTable = ({users}) => {
   const [search, setSearch] = useState(users);
   const [pageNumber, setPageNumber] = useState(0);
   const [loader,setLoader] = useState(true)
   const usersPerPage = 5;
-  let itemsVisited = 0
 
   useEffect(() => {
     if(users.length !== 0 ){
@@ -29,16 +30,7 @@ const UsersTable = ({users}) => {
     )
   }
 
-
-  if(pageNumber === 0){
-    itemsVisited = 0
-  }else{
-    //El -1 se coloca para que el array displayUsers tome en cuenta el primer elemento
-    itemsVisited = pageNumber * usersPerPage
-  }
-
-  const displayUsers = search.slice(itemsVisited, itemsVisited + usersPerPage )
-  const pageCount = Math.ceil(search.length/usersPerPage)
+  const paginationParameters = pagination(usersPerPage,pageNumber,search)
   const pageChange = ({ selected }) => {
     setPageNumber(selected);
   };
@@ -47,8 +39,15 @@ const UsersTable = ({users}) => {
   return (
     <div className="col s12 table-container">
       <SearchUser users={users} setSearch={setSearch} />
+      <ReactHTMLTableToExcel
+              className="btn waves-effect waves-light margin-top"
+              table="users"
+              filename={`Tabla data de Usuarios IPT`}
+              sheet="Usuarios"
+              buttonText="Descargar Tabla"
+      />
       <div className="card-panel z-depth-3">
-        <table className="responsive-table centered striped centered">
+        <table className="responsive-table centered striped centered" id="users">
           <thead>
             <tr>
               <th>Cedula</th>
@@ -64,7 +63,7 @@ const UsersTable = ({users}) => {
           <tbody>
             {search.length <= usersPerPage
               ? search.map((user) => <Users key={user.userId} user={user} />)
-              : displayUsers.map((user) => (
+              : paginationParameters.displayItems.map((user) => (
                   <Users key={user.userId} user={user} />
                 ))}
           </tbody>
@@ -72,7 +71,7 @@ const UsersTable = ({users}) => {
         <ReactPaginate
           previousLabel={"Prev"}
           nextLabel={"Next"}
-          pageCount={pageCount}
+          pageCount={paginationParameters.pageCount}
           onPageChange={pageChange}
           containerClassName={"pagination pages"}
           activeClassName={"active orange waves-effect"}

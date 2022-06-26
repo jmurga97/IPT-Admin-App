@@ -11,18 +11,17 @@ const Dashboard = () => {
 
   const {initialState} = useContext(AppContext)
   const { handleInitialData } = initialState;
-  const {users,micronodes,authedKiosko} = initialState.state
+  const {users,micronodes,authedKiosko, ticketCounter} = initialState.state
 
   useEffect(() => {
     handleInitialData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <div className="page-container ipt-background">
       <div className="row">
         <KioskoCard authedKiosko={authedKiosko}/>
-        <TicketsCard/>
+        <TicketsCard counter = {ticketCounter}/>
         <MicronodesCard   micronodes={micronodes}/>
       </div>
       <div className="row">

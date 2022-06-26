@@ -1,11 +1,12 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import AppContext from "../context/AppContext";
 import formatName from "../utils/formatName";
 import "../styles/AddTicket.css";
 import Loader from "../components/Loader";
 import toasts from "../utils/toasts";
 import axios from "axios";
+import onAddTicketCounter from "../utils/onAddTicketCounter";
 import M from "materialize-css";
 
 const AddTicket = () => {
@@ -13,14 +14,14 @@ const AddTicket = () => {
   const ticketForm = useRef(null);
 
   const [error, setError] = useState("");
+  //const ticketCounter = useRef(0)
   const [dolar, setDolar] = useState(0);
   const [dateDolar, setDateDolar] = useState("");
   const [loader, setLoader] = useState(false);
 
-  const navigate = useNavigate();
-
   const { initialState } = useContext(AppContext);
-  const { users, authedKiosko } = initialState.state;
+  const { users, authedKiosko, ticketCounter } = initialState.state;
+  const {addTicketCounter} = initialState
   const [userDetail] = users.filter((user) => user.userId.toString() === id);
 
   useEffect(() => {
@@ -44,10 +45,6 @@ const AddTicket = () => {
     };
     getDolarTodayData();
   }, []);
-
-  const onGoToInfoTickets = () => {
-    navigate(`/infoticket/${id}`);
-  };
 
   const onAddTicket = (e) => {
     e.preventDefault();
@@ -77,6 +74,15 @@ const AddTicket = () => {
         }
         setLoader(false);
         ticketForm.current.reset();
+        return msg
+      }).then((msg) => {
+        if(!msg){
+          //Add Ticket counter to State
+          addTicketCounter()
+          //Handle counter on localStorage and uploading data to Firestore if the date changes
+          //Add +1 on onAddTicketCounter because of async behavior of setState
+          onAddTicketCounter(authedKiosko[0].docId.trim(),initialState.handleAddTicketCounter, ticketCounter + 1)
+        }
       });
     } else {
       setError("La información proporcionada no coincide");
@@ -88,7 +94,6 @@ const AddTicket = () => {
   if (!userDetail) {
     toasts("Este usuario no existe");
   }
-  //console.log('LOADER',loader)
 
   return (
     <div className="page-container ipt-background">
@@ -158,14 +163,6 @@ const AddTicket = () => {
               <div className="card-action">
                 <button type="submit" className="btn waves-effect waves-light">
                   Agregar Ticket
-                </button>
-
-                <button
-                  onClick={onGoToInfoTickets}
-                  type="button"
-                  className="btn waves-effect waves-light"
-                >
-                  Info Tickets
                 </button>
               </div>
             </div>

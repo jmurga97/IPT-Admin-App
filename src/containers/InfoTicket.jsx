@@ -5,31 +5,32 @@ import AppContext from "../context/AppContext";
 import ReactPaginate from "react-paginate";
 import formatName from "../utils/formatName";
 import { AiFillFileAdd } from "react-icons/ai";
+import pagination from "../utils/pagination";
 
 const InfoTicket = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { initialState } = useContext(AppContext);
   const [pageNumber, setPageNumber] = useState(0);
-  const users = initialState.state.users;
+  const { users } = initialState.state;
 
   if (users.length === 0) {
     return <Navigate to="/" replace />;
   }
 
+  //Ubico el usuario de interes a traves de filter
   const [userDetail] = users.filter(
     (userDetail) => userDetail.userId.toString() === id
   );
-
   const tickets = userDetail.tickets;
+
   const onAddTicket = () => {
     navigate(`/addticket/${id}`);
   };
+
   //Pagination parameters
-  const ticketsPerPage = 12;
-  const itemsVisited = pageNumber + ticketsPerPage;
-  let displayTickets = null;
-  let pageCount = null;
+  const ticketsPerPage = 10;
+  let paginationParameters = {}
   const pageChange = ({ selected }) => {
     setPageNumber(selected);
   };
@@ -50,8 +51,7 @@ const InfoTicket = () => {
       </div>
     );
   } else {
-    displayTickets = tickets.slice(itemsVisited, itemsVisited + ticketsPerPage);
-    pageCount = Math.ceil(tickets.length / ticketsPerPage);
+    paginationParameters = pagination(ticketsPerPage,pageNumber,tickets)
   }
   return (
     <div className="page-container ipt-background">
@@ -112,7 +112,7 @@ const InfoTicket = () => {
                 ? tickets.map((ticket) => (
                     <Tickets key={ticket.ticketId} ticket={ticket} />
                   ))
-                : displayTickets.map((ticket) => (
+                : paginationParameters.displayItems.map((ticket) => (
                     <Tickets key={ticket.ticketId} ticket={ticket} />
                   ))}
             </tbody>
@@ -120,7 +120,7 @@ const InfoTicket = () => {
           <ReactPaginate
             previousLabel={"Prev"}
             nextLabel={"Next"}
-            pageCount={pageCount}
+            pageCount={paginationParameters.pageCount}
             onPageChange={pageChange}
             containerClassName={"pagination pages"}
             activeClassName={"active orange waves-effect"}
