@@ -79,7 +79,7 @@ const Register = () => {
           </div>
           <div className="card-panel white black-text">
             <div className="input-field col s12">
-              <input id="cedula" name="cedula" type="text" required />
+              <input id="cedula" name="cedula" type="number" required />
               <label htmlFor="cedula">Cédula</label>
             </div>
           </div>
@@ -91,13 +91,13 @@ const Register = () => {
           </div>
           <div className="card-panel white black-text">
             <div className="input-field col s12">
-              <input id="email" name="email" type="text" required />
+              <input id="email" name="email" type="text" />
               <label htmlFor="email">Email</label>
             </div>
           </div>
           <div className="card-panel white black-text">
             <div className="input-field col s12">
-              <input id="phone" type="tel" name="phone" required />
+              <input id="phone" type="number" name="phone" required />
               <label htmlFor="phone">Teléfono</label>
             </div>
           </div>
