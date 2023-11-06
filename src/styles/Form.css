@@ -1,0 +1,15 @@
+.login-form form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-flow: column nowrap;
+  width: 100%;
+}
+
+.login-form form .input-field label {
+  color: white;
+}
+.login-form form input {
+  color: white;
+  border-bottom: 1px solid white;
+}

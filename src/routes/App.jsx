@@ -4,6 +4,7 @@ import Dashboard from "../containers/Dashboard";
 import Register from "../containers/Register";
 import AddTicket from "../containers/AddTicket";
 import InfoTicket from "../containers/InfoTicket";
+import Pagos from "../containers/Pagos";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import useInitialState from "../hooks/useInitialState";
@@ -14,8 +15,10 @@ import ProtectedRoute from "../containers/ProtectedRoutes";
 import Loader from "../components/Loader";
 import AllTickets from "../containers/AllTickets";
 
+
 /** TODO:
- *
+ *  ARREGLAR ERROR DE FECHAS PARA RECUPERAR DATOS DE PAGO EN /tickets
+ *  ARREGLAR DASHBOARD EN LA PAGINA PRINCIPAL
  *
  * */
 const App = () => {
@@ -66,7 +69,7 @@ const App = () => {
             }
           />
         )}
-
+        <Route path="/pagos" element={<Pagos/>}/>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </AppContext.Provider>

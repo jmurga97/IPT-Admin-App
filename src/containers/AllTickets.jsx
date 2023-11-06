@@ -9,6 +9,57 @@ import M from "materialize-css";
 import ReactHTMLTableToExcel from "react-html-table-to-excel";
 import pagination from "../utils/pagination";
 
+function ticketsTable (tickets,ticketsPerPage, displayItems){
+  return(
+    <>
+    <table
+              className="responsive-table centered striped centered"
+              id="table-to-xls"
+              style={{display: 'none'}}
+            >
+              <thead>
+                <tr>
+                  <th>Ticket ID</th>
+                  <th>Usuario</th>
+                  <th>Monto Bs.</th>
+                  <th>Tipo de Pago</th>
+                  <th>Kiosko</th>
+                  <th>Fecha de Pago</th>
+                </tr>
+              </thead>
+              <tbody>
+                 {tickets.map((ticket) => (
+                      <Tickets key={ticket.ticketId} ticket={ticket} />
+                    ))}
+              </tbody>
+    </table>
+    <table
+              className="responsive-table centered striped centered"
+            >
+              <thead>
+                <tr>
+                  <th>Ticket ID</th>
+                  <th>Usuario</th>
+                  <th>Monto Bs.</th>
+                  <th>Tipo de Pago</th>
+                  <th>Kiosko</th>
+                  <th>Fecha de Pago</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tickets.length <= ticketsPerPage
+                  ? tickets.map((ticket) => (
+                      <Tickets key={ticket.ticketId} ticket={ticket} />
+                    ))
+                  : displayItems.map((ticket) => (
+                      <Tickets key={ticket.ticketId} ticket={ticket} />
+                    ))}
+              </tbody>
+    </table>
+    </>
+  )
+}
+
 const AllTickets = () => {
   const [loader, setLoader] = useState(false);
   const [pageNumber, setPageNumber] = useState(0);
@@ -43,9 +94,10 @@ const AllTickets = () => {
     const formData = new FormData(form.current);
     const month = Number(formData.get("month"));
     const year = formData.get("year");
-    initialState
-      .handleSearchTickets(`0${month}`, year, `0${month + 1}`)
+      initialState
+      .handleSearchTickets(`${month}`, year, `${month + 1}`)
         .then(()=>setLoader(false))
+
   };
 
   const {displayItems,pageCount} = pagination(ticketsPerPage,pageNumber,tickets)
@@ -94,30 +146,7 @@ const AllTickets = () => {
           {loader ? (
             <Loader container="center" color="orange-loader" size="small" />
           ) : (
-            <table
-              className="responsive-table centered striped centered"
-              id="table-to-xls"
-            >
-              <thead>
-                <tr>
-                  <th>Ticket ID</th>
-                  <th>Usuario</th>
-                  <th>Monto Bs.</th>
-                  <th>Tipo de Pago</th>
-                  <th>Kiosko</th>
-                  <th>Fecha de Pago</th>
-                </tr>
-              </thead>
-              <tbody>
-                {tickets.length <= ticketsPerPage
-                  ? tickets.map((ticket) => (
-                      <Tickets key={ticket.ticketId} ticket={ticket} />
-                    ))
-                  : displayItems.map((ticket) => (
-                      <Tickets key={ticket.ticketId} ticket={ticket} />
-                    ))}
-              </tbody>
-            </table>
+            ticketsTable(tickets,ticketsPerPage,displayItems)
           )}
           <ReactPaginate
             previousLabel={"Prev"}

@@ -164,17 +164,26 @@ const useInitialState = () => {
   };
 
   const handleSearchTickets = async (month, year, nextMonth) => {
+    const nextYear = parseInt(year) + 1
     const from = new Date(`${year}-${month}`);
-    const until = new Date(`${year}-${nextMonth}`);
+    //Si nextMonth es igual a 13 quiere decir que voy a requerir el periodo de diciembre, por lo que until debe tomar encuenta hasta Enero del año siguiente
+    //es por eso que se crea la fecha `${nextYear}-01` si este caso es seleccionado
+    const until = parseInt(nextMonth) === 13 ? new Date(`${nextYear}-01`) : new Date(`${year}-${nextMonth}`)
+    console.log('PERIODO REQUERIDO', `${from} ////// ${until}`)
+    // console.log('')
     const q = query(
       collection(db, "tickets"),
       where("timestamp", ">", from),
       where("timestamp", "<=", until),
       orderBy('timestamp','desc')
     );
-    const queryTicketsSnapshot = await getDocs(q);
-    const tickets = formatDataFromFirestore(queryTicketsSnapshot);
-    addAllTickets(tickets);
+    try{
+      const queryTicketsSnapshot = await getDocs(q);
+      const tickets = formatDataFromFirestore(queryTicketsSnapshot);
+      addAllTickets(tickets);
+    }catch(e){
+      console.log(e)
+    }
   };
 
   //Agregar contador de ticket vendido al array soldTickets en kioskos para hacer seguimiento de los cierres diarios
