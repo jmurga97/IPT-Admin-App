@@ -15,8 +15,8 @@ const AddTicket = () => {
 
   const [error, setError] = useState("");
   //const ticketCounter = useRef(0)
-  const [dolar, setDolar] = useState(0);
-  const [dateDolar, setDateDolar] = useState("");
+  // const [dolar, setDolar] = useState(0);
+  // const [dateDolar, setDateDolar] = useState("");
   const [loader, setLoader] = useState(false);
 
   const { initialState } = useContext(AppContext);
@@ -27,24 +27,25 @@ const AddTicket = () => {
   useEffect(() => {
     M.AutoInit();
   }, []);
-
-  useEffect(() => {
-    const getDolarTodayData = async () => {
-      try {
-        setLoader(true);
-        const response = await axios.get(
-          `https://s3.amazonaws.com/dolartoday/data.json`
-        );
-        setDolar(response.data["USD"].sicad2);
-        setDateDolar(response.data["_timestamp"].fecha_nice);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoader(false);
-      }
-    };
-    getDolarTodayData();
-  }, []);
+  // API DE DOLAR TODAY NO DISPONIBLE
+  // useEffect(() => {
+  //   const getDolarTodayData = async () => {
+  //     try {
+  //       setLoader(true);
+  //       const response = await axios.get(
+  //         `https://s3.amazonaws.com/dolartoday/data.json`
+  //       );
+  //       setDolar(response.data["USD"].sicad2);
+  //       setDateDolar(response.data["_timestamp"].fecha_nice);
+  //     } catch (err) {
+  //       setDolar('No disponible')
+  //       setError(err.message);
+  //     } finally {
+  //       setLoader(false);
+  //     }
+  //   };
+  //   getDolarTodayData();
+  // }, []);
 
   const onAddTicket = (e) => {
     e.preventDefault();
@@ -147,13 +148,16 @@ const AddTicket = () => {
                     <label htmlFor="ticketConfirm">Monto a cobrar</label>
                   </div>
 
+                  {
+                  /* API DE DOLAR TODAY NO DISPONIBLE
+
                   <div className="col s12 ">
                     <b>
                       Dólar Banco Central de Venezuela -{" "}
                       {dateDolar && dateDolar}
                     </b>
                     <p>BCV: {dolar && dolar} Bs</p>
-                  </div>
+                  </div> */}
 
                   {/* <div className="col s12">
                     <b>Monto: </b> <span>{dolar && Number(dolar*3).toFixed(2)} Bs</span>

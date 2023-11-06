@@ -15,7 +15,6 @@ import ProtectedRoute from "../containers/ProtectedRoutes";
 import Loader from "../components/Loader";
 import AllTickets from "../containers/AllTickets";
 
-
 /** TODO:
  *  ARREGLAR ERROR DE FECHAS PARA RECUPERAR DATOS DE PAGO EN /tickets
  *  ARREGLAR DASHBOARD EN LA PAGINA PRINCIPAL
@@ -45,6 +44,7 @@ const App = () => {
     );
   }
 
+
   return (
     <AppContext.Provider value={{ initialState, setAuthUser, authUser }}>
       {!authUser ? null : <Navbar />}
@@ -56,20 +56,22 @@ const App = () => {
           <Route path="/addticket/:id" element={<AddTicket />} />
           <Route path="/infoticket/:id" element={<InfoTicket />} />
         </Route>
-        {!authUser ? null : (
+        {/* Las rutas protegidas por privilegios no funcionan del todo bien, es por eso que se pone más abajo isAllowed = true /
+          La idea sería comprovar si authUser.email === lista de usuarios con privilegios como soporte@voxtel.com.ve */}
+        {authUser && (
           <Route
             path="/tickets"
             element={
               <ProtectedRoute
                 user={authUser}
-                isAllowed={authUser.email === "soporte@voxtel.com.ve"}
+                isAllowed={true}
               >
                 <AllTickets />
               </ProtectedRoute>
             }
           />
         )}
-        <Route path="/pagos" element={<Pagos/>}/>
+        {/* Para una próxima implementación para reporte de pagos de usuarios IPT PREMIUM <Route path="/pagos" element={<Pagos />} /> */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </AppContext.Provider>

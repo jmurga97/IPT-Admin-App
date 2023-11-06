@@ -45,9 +45,9 @@ const Pagos = () => {
   useEffect(() => {
     M.AutoInit();
   }, []);
-  useEffect(()=>{
-    console.log("METODO REF",method)
-  },[])
+  // useEffect(()=>{
+  //   console.log("METODO REF",method)
+  // },[])
   const tipoDePagoRef = useCallback(node => {
     console.log('USE CALLBACK HI')
     setMethod(node.value)
@@ -55,7 +55,7 @@ const Pagos = () => {
       setMethod(node.value)
     }
   },[])
-  console.log(method)
+  // console.log(method)
   return (
     <SimpleLayout title="Pagos IPT Premium" subtitle="Reporte sus pagos mes a mes por nuestra plataforma">
       <Form classname="row" btnText="Enviar Pagos" onSubmitting={onPayment}>
